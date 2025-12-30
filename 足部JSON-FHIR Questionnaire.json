@@ -1,0 +1,1473 @@
+{
+    "resourceType": "Questionnaire",
+    "id": "53175101",
+    "meta": {
+        "versionId": "1",
+        "lastUpdated": "2025-11-21T08:23:45.532+00:00",
+        "source": "#1BYGsmIFY5Zj5d5m"
+    },
+    "title": "Converted Questionnaire (Fixed for FHIR R4)",
+    "status": "draft",
+    "item": [
+        {
+            "linkId": "1.1",
+            "text": "姓名",
+            "type": "string"
+        },
+        {
+            "linkId": "1.2",
+            "text": "性別",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "男"
+                },
+                {
+                    "valueString": "女"
+                }
+            ]
+        },
+        {
+            "linkId": "1.3",
+            "text": "評估日期(西元年/月/日):",
+            "type": "string"
+        },
+        {
+            "linkId": "1.4",
+            "text": "個案意識",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "清醒"
+                },
+                {
+                    "valueString": "混亂"
+                },
+                {
+                    "valueString": "嗜睡"
+                },
+                {
+                    "valueString": "昏迷"
+                }
+            ]
+        },
+        {
+            "linkId": "1.5",
+            "text": "視力",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "清楚"
+                },
+                {
+                    "valueString": "模糊"
+                },
+                {
+                    "valueString": "失明"
+                }
+            ]
+        },
+        {
+            "linkId": "1.6",
+            "text": "關節活動",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "無影響日常活動功能"
+                },
+                {
+                    "valueString": "有影響日常活動功能，如"
+                }
+            ]
+        },
+        {
+            "linkId": "1.6.a",
+            "text": "說明:",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "1.6",
+                    "operator": "=",
+                    "answerString": "有影響日常活動功能，如"
+                }
+            ]
+        },
+        {
+            "linkId": "1.7",
+            "text": "教育程度",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "不識字"
+                },
+                {
+                    "valueString": "小學"
+                },
+                {
+                    "valueString": "國中"
+                },
+                {
+                    "valueString": "高中"
+                },
+                {
+                    "valueString": "大學"
+                },
+                {
+                    "valueString": "研究所"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "1.7.a",
+            "text": "教育程度－其他:",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "1.7",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "1.8",
+            "text": "過去病史",
+            "type": "choice",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "糖尿病"
+                },
+                {
+                    "valueString": "高血壓"
+                },
+                {
+                    "valueString": "中風"
+                },
+                {
+                    "valueString": "高血脂"
+                },
+                {
+                    "valueString": "心臟病"
+                },
+                {
+                    "valueString": "動脈性疾病"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "1.8.a",
+            "text": "糖尿病－平均血糖值(三個月內):",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "1.8",
+                    "operator": "=",
+                    "answerString": "糖尿病"
+                }
+            ]
+        },
+        {
+            "linkId": "1.8.b",
+            "text": "過去病史－其他:",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "1.8",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "1.9",
+            "text": "主要照顧者:",
+            "type": "string"
+        },
+        {
+            "linkId": "1.10",
+            "text": "若身體不適時，怎麼處理:",
+            "type": "string"
+        },
+        {
+            "linkId": "1.11",
+            "text": "目前使用中的藥物:",
+            "type": "string"
+        },
+        {
+            "linkId": "1.12",
+            "text": "居家環境狀況:",
+            "type": "string"
+        },
+        {
+            "linkId": "2.1.1",
+            "text": "每趾間完好無受損-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.1.2",
+            "text": "每趾間完好無受損-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.1.3",
+            "text": "趾間皮膚有浸潤-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.1.4",
+            "text": "趾間皮膚有浸潤-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.1.5",
+            "text": "趾間皮膚受損-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.1.6",
+            "text": "趾間皮膚受損-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.1",
+            "text": "皮膚完整有彈性（健康）-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.2",
+            "text": "皮膚完整有彈性（健康）-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.3",
+            "text": "足部皮膚乾燥-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.4",
+            "text": "足部皮膚乾燥-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.5",
+            "text": "足部有龜裂-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.6",
+            "text": "足部有龜裂-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.7",
+            "text": "龜裂部位 (1~3級: 1級:皮膚表面看到縫隙 2級:裂隙加深且有疼痛感 3級:裂隙深伴隨疼痛且出血)",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.2.5",
+                    "operator": "=",
+                    "answerString": "是"
+                },
+                {
+                    "question": "2.2.6",
+                    "operator": "=",
+                    "answerString": "是"
+                }
+            ],
+            "enableBehavior": "any",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "趾間"
+                },
+                {
+                    "valueString": "足底"
+                },
+                {
+                    "valueString": "腳跟"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.2.7.a",
+            "text": "腳趾（分數）",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "腳趾"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.2.7.b",
+            "text": "趾間（分數）",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "趾間"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.2.7.c",
+            "text": "足底（分數）",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "足底"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.2.7.d",
+            "text": "腳跟（分數）",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "腳跟"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.2.7.e",
+            "text": "其他（分數）",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.2.7.e.1",
+            "text": "其他部位說明",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "2.2.7",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ],
+            "enableBehavior": "any"
+        },
+        {
+            "linkId": "2.4.1",
+            "text": "大部分足部皮膚都是健康的-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.2",
+            "text": "大部分足部皮膚都是健康的-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.3",
+            "text": "大部分皮膚發紅(基礎護理、醫療轉介)-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.4",
+            "text": "大部分皮膚發紅(基礎護理、醫療轉介)-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.5",
+            "text": "大部分皮膚偏黑(基礎護理、醫療轉介)-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.6",
+            "text": "大部分皮膚偏黑(基礎護理、醫療轉介)-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "2.4.7",
+            "text": "大部分皮膚是其他顏色",
+            "type": "string"
+        },
+        {
+            "linkId": "2.5.1",
+            "text": "足部有沒有胼胝-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.5.2",
+            "text": "足部有沒有胼胝-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.5.3",
+            "text": "胼胝部位",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.5.1",
+                    "operator": "=",
+                    "answerString": "有"
+                },
+                {
+                    "question": "2.5.2",
+                    "operator": "=",
+                    "answerString": "有"
+                }
+            ],
+            "enableBehavior": "any",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "趾間"
+                },
+                {
+                    "valueString": "足底"
+                },
+                {
+                    "valueString": "腳跟"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.5.3.a",
+            "text": "其他部位說明",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "2.5.3",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.6.1",
+            "text": "足底有沒有雞眼-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.6.2",
+            "text": "足底有沒有雞眼-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.6.3",
+            "text": "雞眼部位",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.6.1",
+                    "operator": "=",
+                    "answerString": "有"
+                },
+                {
+                    "question": "2.6.2",
+                    "operator": "=",
+                    "answerString": "有"
+                }
+            ],
+            "enableBehavior": "any",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "趾間"
+                },
+                {
+                    "valueString": "足底"
+                },
+                {
+                    "valueString": "腳跟"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.6.3.a",
+            "text": "其他部位說明",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "2.6.3",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.7.1",
+            "text": "足底有沒有疣-左",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.7.2",
+            "text": "足底有沒有疣-右",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.7.3",
+            "text": "疣的部位",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.7.1",
+                    "operator": "=",
+                    "answerString": "有"
+                },
+                {
+                    "question": "2.7.2",
+                    "operator": "=",
+                    "answerString": "有"
+                }
+            ],
+            "enableBehavior": "any",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "趾間"
+                },
+                {
+                    "valueString": "足底"
+                },
+                {
+                    "valueString": "腳跟"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.7.3.a",
+            "text": "其他部位說明",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "2.7.3",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.1",
+            "text": "腳、腳踝或腿部有沒有明顯腫脹",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.2",
+            "text": "腫漲是否像皮下額外組織液，皮膚看起來緊繃厚實",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.8.1",
+                    "operator": "=",
+                    "answerString": "有"
+                }
+            ],
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.3",
+            "text": "水腫部位與分級(1~4+)",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "2.8.1",
+                    "operator": "=",
+                    "answerString": "有"
+                },
+                {
+                    "question": "2.8.2",
+                    "operator": "=",
+                    "answerString": "有"
+                }
+            ],
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "足背"
+                },
+                {
+                    "valueString": "腳踝"
+                },
+                {
+                    "valueString": "脛骨"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.3.a",
+            "text": "腳趾(分數)",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.8.3",
+                    "operator": "=",
+                    "answerString": "腳趾"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.3.b",
+            "text": "足背(分數)",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.8.3",
+                    "operator": "=",
+                    "answerString": "足背"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.3.c",
+            "text": "腳踝(分數)",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.8.3",
+                    "operator": "=",
+                    "answerString": "腳踝"
+                }
+            ]
+        },
+        {
+            "linkId": "2.8.3.d",
+            "text": "脛骨(分數)",
+            "type": "decimal",
+            "enableWhen": [
+                {
+                    "question": "2.8.3",
+                    "operator": "=",
+                    "answerString": "脛骨"
+                }
+            ]
+        },
+        {
+            "linkId": "2.9",
+            "text": "輕觸覺評估(部位:1.大拇指外側 2.第2~4趾前掌區 3.小指外側 4.足跟 5.足背)",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "觸摸，個案可感覺(正常)"
+                },
+                {
+                    "valueString": "觸覺部分感覺"
+                },
+                {
+                    "valueString": "觸覺沒有感覺"
+                }
+            ]
+        },
+        {
+            "linkId": "2.10",
+            "text": "足背動脈",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "脈搏明顯"
+                },
+                {
+                    "valueString": "脈搏微弱"
+                },
+                {
+                    "valueString": "摸不到脈搏"
+                }
+            ]
+        },
+        {
+            "linkId": "2.11",
+            "text": "脛後動脈",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "脈搏明顯"
+                },
+                {
+                    "valueString": "脈搏微弱"
+                },
+                {
+                    "valueString": "摸不到脈搏"
+                }
+            ]
+        },
+        {
+            "linkId": "3.1",
+            "text": "趾甲長度",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "距離游離線0.5mm~1mm（正常）"
+                },
+                {
+                    "valueString": "距離游離線<0.5mm（短）"
+                },
+                {
+                    "valueString": "距離游離線>1mm（長）"
+                }
+            ]
+        },
+        {
+            "linkId": "3.2",
+            "text": "趾甲厚度",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "沒有任何趾甲增厚或變薄"
+                },
+                {
+                    "valueString": "趾甲柔軟易碎"
+                },
+                {
+                    "valueString": "趾甲增厚"
+                }
+            ]
+        },
+        {
+            "linkId": "3.3",
+            "text": "趾甲色澤",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "所有趾甲呈粉紅有光澤"
+                },
+                {
+                    "valueString": "大多數趾甲呈黃色"
+                },
+                {
+                    "valueString": "大多數趾甲呈棕色"
+                },
+                {
+                    "valueString": "大多數趾甲呈黑色"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "3.3.a",
+            "text": "其他：",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "3.3",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "3.4",
+            "text": "崁甲",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "趾甲乾淨、沒有長也無疼痛"
+                },
+                {
+                    "valueString": "崁甲"
+                }
+            ]
+        },
+        {
+            "linkId": "3.4.a",
+            "text": "崁甲部位",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "3.4",
+                    "operator": "=",
+                    "answerString": "崁甲"
+                }
+            ],
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "第1趾"
+                },
+                {
+                    "valueString": "第2趾"
+                },
+                {
+                    "valueString": "第3趾"
+                },
+                {
+                    "valueString": "第4趾"
+                },
+                {
+                    "valueString": "小趾"
+                }
+            ]
+        },
+        {
+            "linkId": "4.1",
+            "text": "趾甲修剪樣態",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "趾甲正常修剪"
+                },
+                {
+                    "valueString": "不適當修剪"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "4.1.a",
+            "text": "趾甲修剪樣態－其他",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "4.1",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "4.2",
+            "text": "拇指外翻",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "大腳趾是直的"
+                },
+                {
+                    "valueString": "大腳趾明顯外翻"
+                }
+            ]
+        },
+        {
+            "linkId": "4.3",
+            "text": "小趾內翻",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "小拇趾是直的"
+                },
+                {
+                    "valueString": "小拇趾明顯傾斜"
+                }
+            ]
+        },
+        {
+            "linkId": "4.4",
+            "text": "腳趾變形",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "腳趾是直的"
+                },
+                {
+                    "valueString": "腳趾有彎曲"
+                }
+            ]
+        },
+        {
+            "linkId": "4.4.a",
+            "text": "腳趾變形－彎曲的部位",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "4.4",
+                    "operator": "=",
+                    "answerString": "腳趾有彎曲"
+                }
+            ],
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "第1趾"
+                },
+                {
+                    "valueString": "第2趾"
+                },
+                {
+                    "valueString": "第3趾"
+                },
+                {
+                    "valueString": "第4趾"
+                },
+                {
+                    "valueString": "小趾"
+                }
+            ]
+        },
+        {
+            "linkId": "4.5",
+            "text": "足弓高度",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "在正確站姿下足弓弧度正常，評估者手指可沒入足弓下"
+                },
+                {
+                    "valueString": "在正確站姿下足弓過低，評估者無法將手指放在足弓下，並可見趾甲"
+                },
+                {
+                    "valueString": "在正確站姿下足弓過高，評估者可將手指放入，手指與足弓有距離"
+                }
+            ]
+        },
+        {
+            "linkId": "5.1",
+            "text": "疼痛部位",
+            "type": "choice",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "無疼痛"
+                },
+                {
+                    "valueString": "腳趾"
+                },
+                {
+                    "valueString": "足底"
+                },
+                {
+                    "valueString": "足跟"
+                },
+                {
+                    "valueString": "腳踝"
+                }
+            ]
+        },
+        {
+            "linkId": "5.2",
+            "text": "何時感覺疼痛",
+            "type": "choice",
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "無疼痛"
+                },
+                {
+                    "valueString": "睡覺時"
+                },
+                {
+                    "valueString": "坐姿"
+                },
+                {
+                    "valueString": "站姿"
+                },
+                {
+                    "valueString": "走路"
+                },
+                {
+                    "valueString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "5.2.a",
+            "text": "何時感覺疼痛－其他",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "5.2",
+                    "operator": "=",
+                    "answerString": "其他"
+                }
+            ]
+        },
+        {
+            "linkId": "6.1",
+            "text": "穿鞋前會檢查襪子/鞋內(鞋墊是否平墊、裡面是否有異物)",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "6.2",
+            "text": "大多時間穿哪種鞋",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "赤腳"
+                },
+                {
+                    "valueString": "拖鞋"
+                },
+                {
+                    "valueString": "涼鞋"
+                },
+                {
+                    "valueString": "休閒鞋"
+                },
+                {
+                    "valueString": "皮鞋"
+                },
+                {
+                    "valueString": "運動鞋"
+                },
+                {
+                    "valueString": "雨鞋"
+                },
+                {
+                    "valueString": "高跟鞋"
+                }
+            ]
+        },
+        {
+            "linkId": "6.3",
+            "text": "鞋後跟可否放入評估者的一根手指，及足型裁切紙與鞋子是否契合",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "適合"
+                },
+                {
+                    "valueString": "不適合"
+                }
+            ]
+        },
+        {
+            "linkId": "6.4",
+            "text": "襪子鬆緊度",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "適中"
+                },
+                {
+                    "valueString": "太緊"
+                },
+                {
+                    "valueString": "太鬆"
+                },
+                {
+                    "valueString": "不適用"
+                }
+            ]
+        },
+        {
+            "linkId": "7.1.1",
+            "text": "腳由誰幫忙洗",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "自己"
+                },
+                {
+                    "valueString": "他人"
+                }
+            ]
+        },
+        {
+            "linkId": "7.1.1.a",
+            "text": "腳由誰幫忙洗－他人",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "7.1.1",
+                    "operator": "=",
+                    "answerString": "他人"
+                }
+            ]
+        },
+        {
+            "linkId": "7.1.2",
+            "text": "多久清洗雙腳",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "每週清洗2~3次"
+                },
+                {
+                    "valueString": "一週清洗2次以下"
+                },
+                {
+                    "valueString": "一個月清洗幾次"
+                },
+                {
+                    "valueString": "從來不清洗"
+                }
+            ]
+        },
+        {
+            "linkId": "7.1.3",
+            "text": "清洗後，是否擦乾趾縫",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "7.1.4",
+            "text": "清洗後，是否有在足部上潤膚產品",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "有"
+                },
+                {
+                    "valueString": "沒有"
+                }
+            ]
+        },
+        {
+            "linkId": "7.2.1",
+            "text": "平常腳指甲由誰修剪",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "自己"
+                },
+                {
+                    "valueString": "他人"
+                }
+            ]
+        },
+        {
+            "linkId": "7.2.1.a",
+            "text": "平常腳指甲由誰修剪－他人",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "7.2.1",
+                    "operator": "=",
+                    "answerString": "他人"
+                }
+            ]
+        },
+        {
+            "linkId": "8.1",
+            "text": "無特殊異常",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "是"
+                },
+                {
+                    "valueString": "否"
+                }
+            ]
+        },
+        {
+            "linkId": "8.2",
+            "text": "異常面項",
+            "type": "choice",
+            "enableWhen": [
+                {
+                    "question": "8.1",
+                    "operator": "=",
+                    "answerString": "否"
+                }
+            ],
+            "repeats": true,
+            "answerOption": [
+                {
+                    "valueString": "皮膚健康"
+                },
+                {
+                    "valueString": "趾甲健康"
+                },
+                {
+                    "valueString": "足部構造"
+                },
+                {
+                    "valueString": "疼痛"
+                },
+                {
+                    "valueString": "鞋襪"
+                },
+                {
+                    "valueString": "自我照顧能力"
+                }
+            ]
+        },
+        {
+            "linkId": "8.2.a",
+            "text": "異常面項說明",
+            "type": "string",
+            "enableWhen": [
+                {
+                    "question": "8.2",
+                    "operator": "exists",
+                    "answerBoolean": true
+                }
+            ]
+        },
+        {
+            "linkId": "8.3",
+            "text": "總結處置",
+            "type": "choice",
+            "answerOption": [
+                {
+                    "valueString": "基礎護理"
+                },
+                {
+                    "valueString": "傷口護理"
+                },
+                {
+                    "valueString": "醫療轉介"
+                }
+            ]
+        }
+    ]
+}
