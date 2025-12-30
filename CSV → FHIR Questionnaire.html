@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>CSV → FHIR Questionnaire (R4) — 最終穩定版</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+ body { font-family: Arial, sans-serif; margin: 20px; max-width: 1100px; }
+ textarea { width: 100%; height: 260px; font-family: monospace; white-space: pre-wrap; }
+ pre { background: #f8f8f8; padding: 12px; border: 1px solid #ccc; max-height: 520px; overflow: auto; }
+ button { padding: 8px 14px; margin: 6px; }
+ .tree { background:#fff; padding:10px; border:1px dashed #aaa; max-height:240px; overflow:auto; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<h2>CSV → FHIR Questionnaire (R4) — 最終穩定版</h2>
+
+<p>支援：parentLinkId / 階層 / enableWhen（完全 R4 相容）/ 上傳 HAPI / 下載 JSON</p>
+
+<textarea id="csv" placeholder="貼入 CSV..."></textarea><br>
+
+<button onclick="showJSON()">顯示 FHIR JSON</button>
+<button onclick="uploadFHIR()">上傳到 HAPI Server</button>
+<button onclick="downloadJSON()">下載 JSON</button>
+<button onclick="resetAll()">清空</button>
+
+<h3>階層預覽：</h3>
+<div id="tree" class="tree">{empty}</div>
+
+<h3>輸出：</h3>
+<pre id="out">{}</pre>
+
+<script>
+// ---------------- CSV 解析 ----------------
+function parseCSV(text) {
+    if (!text) return [];
+    const lines = text.replace(/\r\n/g, "\n").split("\n");
+    const filtered = lines.filter(l => l.trim() !== "");
+    if (!filtered.length) return [];
+
+    function parseLine(line) {
+        const arr = [];
+        let cur = "";
+        let q = false;
+        for (let i = 0; i < line.length; i++) {
+            const c = line[i];
+            if (c === '"') {
+                if (q && line[i+1] === '"') { cur += '"'; i++; continue; }
+                q = !q;
+                continue;
+            }
+            if (c === "," && !q) { arr.push(cur); cur = ""; continue; }
+            cur += c;
+        }
+        arr.push(cur);
+        return arr.map(x => x.trim());
+    }
+
+    const headers = parseLine(filtered[0]);
+    const rows = [];
+
+    for (let i = 1; i < filtered.length; i++) {
+        const cols = parseLine(filtered[i]);
+        while (cols.length < headers.length) cols.push("");
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = cols[idx] || "");
+        rows.push(obj);
+    }
+    return rows;
+}
+
+// ---------------- type map ----------------
+function mapType(t) {
+    const s = (t || "").trim();
+    if (s === "文字題") return "string";
+    if (s === "數字題") return "decimal";
+    if (s === "單選題" || s === "多選題") return "choice";
+    if (s === "是非題") return "boolean";
+    return "string";
+}
+
+// ---------------- answerOption ----------------
+function buildAnswerOption(s) {
+    if (!s) return [];
+    return s.split(";")
+        .map(x => x.trim())
+        .filter(x => x)
+        .map(x => ({ valueString: x })); // ⚡ R4 最安全
+}
+
+// ---------------- enableWhen (R4 完整版) ----------------
+function buildEnableWhen(row, map) {
+    const q = (row.enableWhenQuestion || "").trim();
+    if (!q) return null;
+
+    let op = (row.enableWhenOperator || "=").trim();
+    const ans = (row.enableWhenAnswerCode || "").trim();
+
+    // R4 allowed operators
+    const validOps = ["=", "!=", ">", "<", ">=", "<=", "exists"];
+
+    // ---- 防呆：如果 operator 是中文（例如「是」「否」），一定是資料錯位 ----
+    if (!validOps.includes(op)) {
+        console.warn("⚠ 偵測到非法 operator =", op, "→ 自動改回 '='");
+        op = "=";   // fallback
+    }
+
+    const values = ans.split(";").map(v => v.trim()).filter(v => v);
+    const target = map[q] ? map[q].linkId : q;
+    const out = [];
+
+    if (op === "exists") {
+        out.push({
+            question: target,
+            operator: "exists",
+            answerBoolean: true
+        });
+        return out;
+    }
+
+    values.forEach(v => {
+        out.push({
+            question: target,
+            operator: op,
+            answerString: v
+        });
+    });
+
+    return out.length ? out : null;
+}
+
+// ---------------- 階層 ----------------
+function buildHierarchy(rows) {
+    const map = {};
+    const list = rows.map((r, idx) => ({
+        linkId: r.linkId.trim() || ("auto" + idx),
+        text: r.text || "",
+        type: mapType(r.type),
+        parent: (r.parentLinkId || "").trim(),
+        raw: r,
+        children: []
+    }));
+    list.forEach(n => { if (!map[n.linkId]) map[n.linkId] = n; });
+
+    list.forEach(n => {
+        if (n.parent && map[n.parent]) {
+            map[n.parent].children.push(n);
+            n._child = true;
+        }
+    });
+
+    return { roots: list.filter(n => !n._child), map };
+}
+
+// ---------------- 轉成 FHIR JSON ----------------
+function convert(rows) {
+    const { roots, map } = buildHierarchy(rows);
+
+    function buildItem(n) {
+        const item = {
+            linkId: n.linkId,
+            text: n.text,
+            type: n.type
+        };
+
+        if (n.type !== "boolean")
+            item.answerOption = buildAnswerOption(n.raw.answerOption);
+
+        const ew = buildEnableWhen(n.raw, map);
+        if (ew) item.enableWhen = ew;
+
+        if (n.children.length)
+            item.item = n.children.map(c => buildItem(c));
+
+        return item;
+    }
+
+    return {
+        resourceType: "Questionnaire",
+        status: "active",
+        subjectType: ["Patient"],
+        title: "Converted Questionnaire",
+        item: roots.map(r => buildItem(r))
+    };
+}
+
+// ---------------- UI ----------------
+function showJSON() {
+    const rows = parseCSV(csv.value);
+    const q = convert(rows);
+    out.textContent = JSON.stringify(q, null, 2);
+    tree.textContent = renderTree(q.item);
+}
+
+function renderTree(items, depth = 0) {
+    let out = "";
+    items.forEach(i => {
+        out += " ".repeat(depth * 2) + i.linkId + " — " + i.text + "\n";
+        if (i.item) out += renderTree(i.item, depth + 1);
+    });
+    return out || "{empty}";
+}
+
+async function uploadFHIR() {
+    const rows = parseCSV(csv.value);
+    const q = convert(rows);
+
+    const res = await fetch("https://hapi.fhir.org/baseR4/Questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/fhir+json" },
+        body: JSON.stringify(q)
+    });
+
+    out.textContent = JSON.stringify(await res.json(), null, 2);
+}
+
+function downloadJSON() {
+    const blob = new Blob([out.textContent], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "questionnaire.json"; a.click();
+    URL.revokeObjectURL(url);
+}
+
+function resetAll() {
+    csv.value = "";
+    out.textContent = "{}";
+    tree.textContent = "{empty}";
+}
+</script>
+
+</body>
+</html>

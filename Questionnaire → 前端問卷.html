@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>Questionnaire → 前端問卷 (R4/R5 支援)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+body{font-family:"Microsoft JhengHei",Arial,sans-serif;margin:20px;max-width:1100px}
+h1{color:#00529B}
+.question{margin-bottom:12px;padding:8px;border-radius:6px;border:1px solid #eee}
+label{font-weight:600;display:block;margin-bottom:6px}
+button{padding:8px 12px;margin-right:8px}
+.hidden{display:none}
+small.hint{color:#666}
+</style>
+</head>
+<body>
+  <h1>Questionnaire → 前端問卷 (R4/R5)</h1>
+  <input type="file" id="file" accept=".json" />
+  <button id="load">載入問卷</button>
+  <div id="formWrap"><form id="qform"></form></div>
+  <button id="gen">生成 QuestionnaireResponse</button>
+  <button id="download">下載 JSON</button>
+  <button id="post">送到 HAPI Server (R4)</button>
+  <h3>Output</h3><pre id="output"></pre>
+
+<script>
+let questionnaire=null;
+let flatQuestions=[]; // objects: { linkId, text, type, repeats, options, parentLinkId, enableWhen, enableBehavior, clearWhenHidden, originalItem }
+
+const qform = document.getElementById('qform');
+
+document.getElementById('load').addEventListener('click', ()=>{
+  const f = document.getElementById('file').files[0];
+  if(!f){ alert('請選擇 Questionnaire JSON 檔'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    questionnaire = JSON.parse(e.target.result);
+    buildFlatQuestions(questionnaire);
+    renderForm();
+    setupEnableLogic();
+  };
+  reader.readAsText(f,'utf-8');
+});
+
+function buildFlatQuestions(q){
+  flatQuestions = [];
+  function walk(items, parent){
+    if(!items) return;
+    items.forEach(it=>{
+      const obj = {};
+      obj.linkId = it.linkId;
+      obj.text = it.text || it.title || it.label || '';
+      // detect type: try multiple fields for R5
+      obj.type = it.type || it.itemType || 'string';
+      obj.repeats = !!it.repeats || !!it.repeat || !!it.max || (it.type==='choice' && it.repeats===true);
+      // parse answer options (valueString/valueCoding/valueInteger/valueDecimal)
+      obj.options = (it.answerOption||it.answerOptions||it.options||[]).map(opt=>{
+        if(opt.valueString) return opt.valueString;
+        if(opt.valueCoding) return (opt.valueCoding.display || opt.valueCoding.code || JSON.stringify(opt.valueCoding));
+        // fallback: any valueX -> convert to string
+        const keys = Object.keys(opt).filter(k=>k.startsWith('value'));
+        if(keys.length) return String(opt[keys[0]]);
+        return JSON.stringify(opt);
+      });
+      obj.parentLinkId = parent || null;
+      obj.enableWhen = it.enableWhen || it.enable_when || null;
+      obj.enableBehavior = it.enableBehavior || it.enable_behavior || 'all';
+      obj.clearWhenHidden = it.clearWhenHidden || false;
+      obj.originalItem = it;
+      flatQuestions.push(obj);
+      if(it.item && it.item.length) walk(it.item, it.linkId);
+    });
+  }
+  walk(questionnaire.item || [], null);
+}
+
+// render form controls (basic widgets)
+function renderForm(){
+  qform.innerHTML = '';
+  flatQuestions.forEach(q=>{
+    const div = document.createElement('div'); div.className='question'; div.dataset.linkid=q.linkId;
+    const lbl = document.createElement('label'); lbl.textContent = q.text + ' (' + q.linkId + ')';
+    div.appendChild(lbl);
+    if(q.type==='string' || q.type==='display'){
+      const inp = document.createElement('input'); inp.type='text'; inp.name=q.linkId; div.appendChild(inp);
+    } else if(q.type==='integer' || q.type==='decimal' || q.type==='number'){
+      const inp = document.createElement('input'); inp.type='number'; inp.name=q.linkId;
+      if(q.type==='decimal') inp.step='0.01';
+      div.appendChild(inp);
+    } else if(q.type==='boolean'){
+      // render as checkbox
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.name=q.linkId; cb.value='true';
+      div.appendChild(cb); div.appendChild(document.createTextNode(' 是'));
+    } else if(q.type==='choice'){
+      if(q.repeats){
+        q.options.forEach(opt=>{
+          const w = document.createElement('div');
+          const cb = document.createElement('input'); cb.type='checkbox'; cb.name=q.linkId; cb.value=opt;
+          w.appendChild(cb); w.appendChild(document.createTextNode(' '+opt));
+          div.appendChild(w);
+        });
+      } else {
+        q.options.forEach(opt=>{
+          const w = document.createElement('div');
+          const rb = document.createElement('input'); rb.type='radio'; rb.name=q.linkId; rb.value=opt;
+          w.appendChild(rb); w.appendChild(document.createTextNode(' '+opt));
+          div.appendChild(w);
+        });
+      }
+    } else {
+      // fallback text
+      const inp = document.createElement('input'); inp.type='text'; inp.name=q.linkId; div.appendChild(inp);
+    }
+    // initially hide items that have enableWhen
+    if(q.enableWhen && q.enableWhen.length) div.style.display='none';
+    qform.appendChild(div);
+  });
+}
+
+// enableWhen evaluation (supports =, !=, exists, contains, notContains)
+function setupEnableLogic(){
+  function readValue(name){
+    const els = Array.from(qform.querySelectorAll('[name="'+name+'"]'));
+    if(!els.length) return null;
+    if(els[0].type==='checkbox'){
+      // could be repeated checkboxes => array; or single boolean checkbox
+      if(els.length===1) return els[0].checked ? 'true' : '';
+      return els.filter(e=>e.checked).map(e=>e.value);
+    }
+    if(els[0].type==='radio'){
+      const sel = els.find(e=>e.checked);
+      return sel ? sel.value : null;
+    }
+    return els[0].value || '';
+  }
+
+  function checkCond(cond){
+    const op = (cond.operator||'=').toString();
+    const qid = cond.question;
+    const left = readValue(qid);
+    // cond may have various answerX; we test possible keys
+    const condVal = cond.answerString ?? cond.answerBoolean ?? cond.answerInteger ?? cond.answerDecimal ?? cond.answerCoding?.code ?? cond.answerCoding?.display ?? null;
+
+    // array case (multi-select checkboxes)
+    if(Array.isArray(left)){
+      if(op==='=') return left.includes(String(condVal));
+      if(op==='!=') return !left.includes(String(condVal));
+      if(op==='contains') return left.includes(String(condVal));
+      if(op==='notContains') return !left.includes(String(condVal));
+      if(op==='exists') return (left.length>0) === (!!cond.answerBoolean);
+      return false;
+    }
+
+    // single value
+    const sleft = left !== null && left !== undefined ? String(left) : '';
+    if(op==='=') return sleft === String(condVal);
+    if(op==='!=') return sleft !== String(condVal);
+    if(op==='exists') return (sleft!=='') === (!!cond.answerBoolean);
+    if(op==='contains') {
+      // contains when left is a CSV string maybe — treat as substring or when left is single option vs condition value list
+      if(typeof left === 'string') return sleft.indexOf(String(condVal))>=0;
+      return false;
+    }
+    if(op==='notContains') return !(sleft.indexOf(String(condVal))>=0);
+    return false;
+  }
+
+  function evaluateFor(q){
+    const div = qform.querySelector('.question[data-linkid="'+q.linkId+'"]');
+    if(!div) return;
+    let visible = true;
+    if(q.enableWhen && q.enableWhen.length){
+      const behavior = q.enableBehavior || 'all';
+      if(behavior==='any') visible = q.enableWhen.some(c=>checkCond(c));
+      else visible = q.enableWhen.every(c=>checkCond(c));
+    }
+    if(q.parentLinkId){
+      const pdiv = qform.querySelector('.question[data-linkid="'+q.parentLinkId+'"]');
+      if(pdiv && pdiv.style.display==='none') visible=false;
+    }
+    div.style.display = visible ? 'block' : 'none';
+    if(!visible && q.clearWhenHidden){
+      // clear contained inputs
+      Array.from(div.querySelectorAll('input')).forEach(inp=>{
+        if(inp.type==='checkbox' || inp.type==='radio') inp.checked=false; else inp.value='';
+      });
+    }
+    // propagate to children
+    flatQuestions.filter(x=>x.parentLinkId===q.linkId).forEach(c => evaluateFor(c));
+  }
+
+  function updateAll(){
+    flatQuestions.filter(q=>!q.parentLinkId).forEach(q => evaluateFor(q));
+  }
+
+  // attach listeners
+  flatQuestions.forEach(q=>{
+    const els = Array.from(qform.querySelectorAll('[name="'+q.linkId+'"]'));
+    els.forEach(el=>{
+      el.addEventListener('change', updateAll);
+      if(el.type==='text' || el.type==='number') el.addEventListener('input', updateAll);
+    });
+  });
+  updateAll();
+}
+
+// build QuestionnaireResponse
+document.getElementById('gen').addEventListener('click', ()=>{
+  if(!questionnaire){ alert('尚未載入問卷'); return; }
+  const formData = new FormData(qform);
+
+  function buildItems(qItems){
+    return qItems.map(it=>{
+      const obj = { linkId: it.linkId };
+      let answers = null;
+      if(it.type==='choice' && it.repeats){
+        const vals = formData.getAll(it.linkId);
+        if(vals && vals.length) answers = vals.map(v=>({ valueString: v }));
+      } else if(it.type==='choice' && !it.repeats){
+        const v = formData.get(it.linkId);
+        if(v) answers = [{ valueString: v }];
+      } else if(it.type==='integer'){
+        const v = formData.get(it.linkId);
+        if(v!==null && v!=='') answers = [{ valueInteger: Number(v) }];
+      } else if(it.type==='decimal'){
+        const v = formData.get(it.linkId);
+        if(v!==null && v!=='') answers = [{ valueDecimal: Number(v) }];
+      } else if(it.type==='boolean'){
+        const raw = formData.get(it.linkId);
+        if(raw!==null) answers = [{ valueBoolean: raw === 'true' || raw === '1' }];
+      } else {
+        const v = formData.get(it.linkId);
+        if(v) answers = [{ valueString: v }];
+      }
+      if(answers) obj.answer = answers;
+
+      const children = flatQuestions.filter(x=>x.parentLinkId===it.linkId);
+      if(children.length) obj.item = buildItems(children);
+      return obj;
+    });
+  }
+
+  const roots = flatQuestions.filter(q=>!q.parentLinkId);
+  const qResponse = {
+    resourceType: 'QuestionnaireResponse',
+    questionnaire: "Questionnaire/" + questionnaire.id,
+    status: 'completed',
+    item: buildItems(roots)
+  };
+  const out = JSON.stringify(qResponse,null,2);
+  document.getElementById('output').textContent = out;
+});
+
+// download
+document.getElementById('download').addEventListener('click', ()=>{
+  const data = document.getElementById('output').textContent;
+  if(!data){ alert('請先生成 JSON'); return; }
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='QuestionnaireResponse.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+// post to HAPI R4
+document.getElementById('post').addEventListener('click', async ()=>{
+  const data = document.getElementById('output').textContent;
+  if(!data){ alert('請先生成 JSON'); return; }
+  try{
+    const res = await fetch('https://hapi.fhir.org/baseR4/QuestionnaireResponse',{
+      method:'POST', headers:{'Content-Type':'application/fhir+json'}, body: data
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status+' '+res.statusText);
+    const json = await res.json();
+    alert('上傳成功，ID: ' + (json.id || '無'));
+  }catch(e){ alert('上傳失敗：'+e); }
+});
+</script>
+</body>
+</html>
